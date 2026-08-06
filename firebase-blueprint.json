@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "User Profile",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "repairEntry": {
+      "title": "Repair Entry",
+      "description": "PC or Laptop Repair Journal Entry",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "deviceModel": { "type": "string" },
+        "serialNumber": { "type": "string" },
+        "status": { "type": "string" },
+        "faultSummary": { "type": "string" },
+        "repairCostEstimated": { "type": "string" },
+        "technicianNotes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "customerName", "deviceModel"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/userProfile" },
+      "description": "User profiles"
+    },
+    "/repairs/{repairId}": {
+      "schema": { "$ref": "#/entities/repairEntry" },
+      "description": "Repair journal entries"
+    }
+  }
+}

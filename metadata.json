@@ -1,0 +1,6 @@
+{
+  "name": "TermoFix AI - PC & Laptop Repair Diagnostic Chat",
+  "description": "AI diagnostic assistant for PC and laptop repair with live camera analysis, thermal camera thermal imaging, hotspot mapping, voltage test guides, and motherboard troubleshooting.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

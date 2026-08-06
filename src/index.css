@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.4));
+  }
+  50% {
+    opacity: 0.4;
+    filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.9));
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow var(--pulse-speed, 1s) infinite ease-in-out;
+}
+
