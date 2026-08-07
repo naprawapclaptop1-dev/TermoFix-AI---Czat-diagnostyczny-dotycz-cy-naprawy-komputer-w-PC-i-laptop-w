@@ -75,6 +75,7 @@ import { FurMark3DGpuTestModal } from './components/FurMark3DGpuTestModal';
 import { RodoComplianceModal } from './components/RodoComplianceModal';
 import { BiosDmiInfoModal } from './components/BiosDmiInfoModal';
 import { WindowsInstallerServiceModal } from './components/WindowsInstallerServiceModal';
+import { RemoteDesktopModal } from './components/RemoteDesktopModal';
 import { WindowsDesktopShortcutsBar } from './components/WindowsDesktopShortcutsBar';
 import { ThermalHealthOverlayWidget } from './components/ThermalHealthOverlayWidget';
 import { saveThermalSnapshotDB, StoredThermalSnapshot } from './components/ThermalSnapshotGallery';
@@ -202,6 +203,7 @@ export default function App() {
   const [isWindowsInstallerServiceOpen, setIsWindowsInstallerServiceOpen] = useState(false);
   const [isMasterScanOpen, setIsMasterScanOpen] = useState(false);
   const [isFurMarkOpen, setIsFurMarkOpen] = useState(false);
+  const [isRemoteDesktopOpen, setIsRemoteDesktopOpen] = useState(false);
   const [isRodoOpen, setIsRodoOpen] = useState(false);
   const [isHighContrast, setIsHighContrast] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -213,6 +215,26 @@ export default function App() {
     setJournalEntries(DEFAULT_JOURNAL_ENTRIES);
     setToastMessage('🧹 Workspace zresetowany pomyślnie. Nowa sesja rozpoczęta.');
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleSaveToJournal = (log: string) => {
+    const newEntry: JournalEntry = {
+        id: `journal-${Date.now()}`,
+        customerName: 'Serwis',
+        deviceModel: activePreset.titlePl,
+        serialNumber: 'N/A',
+        date: new Date().toLocaleString('pl-PL'),
+        status: 'W trakcie',
+        faultSummary: 'Test obciążeniowy FurMark GPU',
+        peakTemp: 'Nieznana',
+        suspectComponent: 'N/A',
+        repairCostEstimated: '0 PLN',
+        technicianNotes: log,
+    };
+    setJournalEntries(prev => [newEntry, ...prev]);
+    localStorage.setItem('termofix_repair_journal', JSON.stringify([newEntry, ...journalEntries]));
+    setToastMessage('✅ Dodano raport z testu do Dziennika Napraw.');
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   // Auto-Save to IndexedDB Settings State & Feedback
@@ -569,7 +591,8 @@ export default function App() {
   
   const desktopApps = [
     { id: 'master-scan', name: 'Pełny Skan PC & Laptopa', icon: <Scan className="w-8 h-8 text-white" />, color: 'from-cyan-600 to-blue-700', onClick: () => setIsMasterScanOpen(true) },
-    { id: 'furmark-test', name: 'FurMark 3D GPU Test', icon: <Flame className="w-8 h-8 text-white" />, color: 'from-red-600 to-orange-700', onClick: () => setIsFurMarkOpen(true) },
+    { id: 'furmark-test', name: 'Tester GPU / CPU (3DMark & Cinebench)', icon: <Flame className="w-8 h-8 text-white" />, color: 'from-red-600 to-orange-700', onClick: () => setIsFurMarkOpen(true) },
+    { id: 'remote-desktop', name: 'Zdalny Pulpit', icon: <Globe className="w-8 h-8 text-white" />, color: 'from-emerald-600 to-green-700', onClick: () => setIsRemoteDesktopOpen(true) },
     { id: 'rodo-compliance', name: 'RODO i Polityka Serwisu', icon: <ShieldCheck className="w-8 h-8 text-white" />, color: 'from-teal-600 to-emerald-700', onClick: () => setIsRodoOpen(true) },
     { id: 'part-search', name: 'Wyszukiwarka Części', icon: <Search className="w-8 h-8 text-white" />, color: 'from-blue-600 to-indigo-700', onClick: () => setIsPartSearchEngineOpen(true) },
     { id: 'auto-bios', name: 'Universal BIOS Update', icon: <Cpu className="w-8 h-8 text-white" />, color: 'from-blue-500 to-cyan-600', onClick: () => setIsAutoBiosAndRamOpen(true) },
@@ -1271,7 +1294,12 @@ Co sugerujesz jako kolejny krok w procesie diagnostycznym?`);
         isOpen={isFurMarkOpen}
         onClose={() => setIsFurMarkOpen(false)}
         onSendToChat={(prompt) => handleSendMessage(prompt)}
+        onSaveToJournal={handleSaveToJournal}
       />
+
+      {isRemoteDesktopOpen && (
+        <RemoteDesktopModal onClose={() => setIsRemoteDesktopOpen(false)} />
+      )}
 
       <RodoComplianceModal
         isOpen={isRodoOpen}

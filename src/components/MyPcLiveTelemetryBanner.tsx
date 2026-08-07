@@ -469,6 +469,18 @@ Oceń stan mojego komputera, sprawdź zalecane ustawienia wydajności i podaj in
                   <div className="flex flex-wrap gap-1">
                     <button
                       type="button"
+                      onClick={() => setEditForm({
+                        ...editForm,
+                        gpuRenderer: 'AMD Radeon RX 7900 XTX 24GB GDDR6',
+                        ramGb: '64 GB RAM DDR5 High-Speed',
+                        diskGb: '12288 GB NVMe M.2 SSD + HDD Storage Array'
+                      })}
+                      className="px-2.5 py-1 bg-red-950/80 hover:bg-red-900 text-red-300 border border-red-500/50 rounded font-bold text-[10px] font-mono flex items-center gap-1"
+                    >
+                      ⚡ Ustaw zestaw: AMD Radeon RX 7900 XTX + 64GB RAM + 12TB Storage
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => setEditForm({ ...editForm, gpuRenderer: 'Intel Iris Xe Graphics (Integrated)' })}
                       className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 rounded text-[10px] font-mono"
                     >
