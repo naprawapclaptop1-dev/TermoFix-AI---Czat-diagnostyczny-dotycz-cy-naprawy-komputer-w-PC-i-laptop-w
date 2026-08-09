@@ -53,12 +53,12 @@ export const CrossPlatformInstallerModal: React.FC<CrossPlatformInstallerModalPr
     URL.revokeObjectURL(url);
   };
 
-  // Generate Windows (.cmd) Launcher Script x64
+  // Generate Windows (.cmd) Launcher Script x64 compatible with Windows 7-11
   const handleDownloadWindowsInstaller = () => {
     const appUrl = window.location.href;
     const script = `@echo off
 :: ===============================================================
-:: TermoFix AI - Standalone Desktop Launcher Windows 10/11 (x64)
+:: TermoFix AI - Instalator Windows 7/8/10/11 64-bit
 :: ===============================================================
 if "%PROCESSOR_ARCHITECTURE%"=="x86" (
   if defined PROCESSOR_ARCHITEW6432 (
@@ -67,40 +67,33 @@ if "%PROCESSOR_ARCHITECTURE%"=="x86" (
   )
 )
 
-title TermoFix AI - Instalator Standalone Desktop Windows x64
+title TermoFix AI - Instalator Windows 7/8/10/11 64-bit
 color 0A
 cls
 echo ===============================================================
-echo   TermoFix AI - Standalone Desktop Launcher & Installer (x64)
+echo   TermoFix AI - Instalator Windows 7/8/10/11 64-bit
 echo ===============================================================
 echo.
-echo Tworzenie skrotu na Pulpicie Windows...
-echo App URL: ${appUrl}
-echo.
-
+echo Tworzenie skrótu na Pulpicie Windows...
 set "DESKTOP=%USERPROFILE%\\Desktop"
-set "SHORTCUT=%DESKTOP%\\TermoFix AI - Serwis PC.url"
-
+set "SHORTCUT=%DESKTOP%\\TermoFix AI - Serwis Windows.url"
 echo [InternetShortcut] > "%SHORTCUT%"
 echo URL=${appUrl} >> "%SHORTCUT%"
 echo IconIndex=0 >> "%SHORTCUT%"
 echo IconFile=%SystemRoot%\\System32\\shell32.dll >> "%SHORTCUT%"
-
 echo.
-echo [SUKCES] Utworzono skrot "TermoFix AI - Serwis PC" na Twoim Pulpicie Windows!
+echo [SUKCES] Utworzono skrót "TermoFix AI - Serwis Windows" na Twoim Pulpicie!
 echo.
-echo Uruchamianie aplikacji w dedykowanym oknie stacji serwisowej...
-
-start msedge --app="${appUrl}" 2>nul || start chrome --app="${appUrl}" 2>nul || start "" "${appUrl}"
-
+echo Uruchamianie aplikacji w domyślnej przeglądarce...
+start "" "${appUrl}" 2>nul || if exist "%ProgramFiles%\\Internet Explorer\\iexplore.exe" ("%ProgramFiles%\\Internet Explorer\\iexplore.exe" "${appUrl}")
 echo.
 echo Gotowe! Mozesz zamknac to okno.
 pause
 `;
-    triggerFileDownload('Instalator_TermoFix_AI_Pulpit_Windows_x64.cmd', script, 'text/plain;charset=utf-8');
+    triggerFileDownload('Instalator_TermoFix_AI_Windows_7-11_x64.cmd', script, 'text/plain;charset=utf-8');
   };
 
-  // Generate PowerShell Windows LNK Shortcut Script (.ps1)
+  // Generate PowerShell Windows LNK Shortcut Script (.ps1) compatible with Windows 7-11
   const handleDownloadPowerShellInstaller = () => {
     const appUrl = window.location.href;
     const psScript = `# TermoFix AI Windows Desktop Installer (PowerShell)
@@ -109,14 +102,14 @@ $ShortcutPath = Join-Path -Path $DesktopPath -ChildPath "TermoFix AI Serwis.lnk"
 
 $WshShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut($ShortcutPath)
-$Shortcut.TargetPath = "msedge.exe"
-$Shortcut.Arguments = "--app=${appUrl}"
+$Shortcut.TargetPath = "powershell.exe"
+$Shortcut.Arguments = "-NoProfile -WindowStyle Hidden -Command \"Start-Process '${appUrl}'\""
 $Shortcut.Description = "TermoFix AI - Serwis PC & Diagnostyka"
 $Shortcut.IconLocation = "%SystemRoot%\\System32\\shell32.dll, 14"
 $Shortcut.Save()
 
 Write-Host "[OK] Skrót 'TermoFix AI Serwis' został dodany na Pulpit Windows!" -ForegroundColor Green
-Start-Process "msedge.exe" -ArgumentList "--app=${appUrl}"
+Start-Process "${appUrl}"
 `;
     triggerFileDownload('Instalator_PowerShell_Pulpit_Windows.ps1', psScript, 'text/plain');
   };
@@ -252,7 +245,7 @@ open "${window.location.href}"
             }`}
           >
             <Monitor className="w-4 h-4" />
-            <span>Windows (10/11)</span>
+            <span>Windows (7-11 x64)</span>
           </button>
 
           <button
@@ -355,6 +348,22 @@ open "${window.location.href}"
                     <Download className="w-4 h-4" />
                     <span>Instalator PowerShell .PS1 (Aplikacja)</span>
                   </button>
+
+                  <a
+                    href="/api/download/windows-full-installer-zip"
+                    className="bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs px-4 py-3 rounded-xl shadow-lg flex items-center justify-center space-x-2 transition"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Pobierz Pełny ZIP Instalatora Windows</span>
+                  </a>
+
+                  <a
+                    href="/api/download/windows-full-installer-zip"
+                    className="bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold text-xs px-4 py-3 rounded-xl shadow-lg flex items-center justify-center space-x-2 transition"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Pobierz gotowy ZIP Instalatora Windows 7–11 x64</span>
+                  </a>
 
                   <a
                     href="https://drive.google.com/file/d/15bVQFIlsXVBkfa1l1WR0zKb8MFuX3_PP/view?usp=sharing"

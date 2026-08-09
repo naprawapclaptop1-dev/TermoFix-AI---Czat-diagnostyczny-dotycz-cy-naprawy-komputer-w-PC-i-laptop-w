@@ -1,139 +1,5 @@
 [
   {
-    "id": "snap_1786041887450_iikba",
-    "timestamp": "2026-08-06T18:44:44.500Z",
-    "specs": {
-      "formFactor": "DESKTOP",
-      "chassisTypeRaw": "3 (Desktop Tower)",
-      "chassisDescription": "Komputer Stacjonarny PC / ATX Tower",
-      "detectionMethod": "SYSTEM_SHELL",
-      "confidencePercent": 90,
-      "cpu": {
-        "model": "unknown",
-        "cores": 24,
-        "threads": 24,
-        "clockSpeedGhz": "3.20 GHz (Turbo 5.80 GHz)",
-        "architecture": "x64"
-      },
-      "ram": {
-        "totalBytes": 17179869184,
-        "totalGbFormatted": "16 GB RAM DDR4/DDR5",
-        "freeBytes": 9448928051,
-        "freeGbFormatted": "8.8 GB Wolne",
-        "usedPercent": 45,
-        "memoryType": "DDR4 / DDR5 Dual-Channel"
-      },
-      "disk": {
-        "totalBytes": 1099511627776,
-        "totalGbFormatted": "1024 GB NVMe M.2 SSD Array",
-        "freeBytes": 494780232499,
-        "freeGbFormatted": "460.8 GB Wolne",
-        "driveType": "NVMe M.2 SSD PCIe 4.0 High-Speed"
-      },
-      "gpu": {
-        "vendorAndModel": "NVIDIA GeForce RTX 4090 24GB GDDR6X (PCIe 4.0 x16)",
-        "deviceId": "PCI\\VEN_10DE&DEV_2684&SUBSYS_13971043",
-        "vramGb": 24
-      },
-      "os": {
-        "platform": "linux",
-        "distroOrBuild": "linux 4.19.0-gvisor (x64)",
-        "hostname": "localhost",
-        "ipAddress": "169.254.9.1"
-      },
-      "motherboard": {
-        "manufacturer": "Gigabyte Technology Co., Ltd.",
-        "model": "Z790 AORUS MASTER (REV 1.0)",
-        "uuid": "4C4C4554-0044-3010-8041-B2C04F315833",
-        "serialNumber": "SN-98214710294-Z790"
-      },
-      "bios": {
-        "vendor": "American Megatrends International, LLC.",
-        "version": "F19",
-        "releaseDate": "01/15/2026",
-        "boardModel": "Z790 AORUS MASTER",
-        "systemVendor": "Gigabyte Technology Co., Ltd.",
-        "modelSpecificBiosString": "F19-GIGABYTE-Z790"
-      },
-      "timestamp": "2026-08-06T18:44:47.221Z"
-    },
-    "sensors": {
-      "cpuTempC": 52,
-      "gpuTempC": 51,
-      "vrmTempC": 58,
-      "cpuFanRpm": 2126
-    },
-    "thermalSpikeDetected": false,
-    "spikeReason": "Normal Thermal State"
-  },
-  {
-    "id": "snap_1786041902376_thbpn",
-    "timestamp": "2026-08-06T18:44:59.428Z",
-    "specs": {
-      "formFactor": "DESKTOP",
-      "chassisTypeRaw": "3 (Desktop Tower)",
-      "chassisDescription": "Komputer Stacjonarny PC / ATX Tower",
-      "detectionMethod": "SYSTEM_SHELL",
-      "confidencePercent": 90,
-      "cpu": {
-        "model": "unknown",
-        "cores": 24,
-        "threads": 24,
-        "clockSpeedGhz": "3.20 GHz (Turbo 5.80 GHz)",
-        "architecture": "x64"
-      },
-      "ram": {
-        "totalBytes": 17179869184,
-        "totalGbFormatted": "16 GB RAM DDR4/DDR5",
-        "freeBytes": 9448928051,
-        "freeGbFormatted": "8.8 GB Wolne",
-        "usedPercent": 45,
-        "memoryType": "DDR4 / DDR5 Dual-Channel"
-      },
-      "disk": {
-        "totalBytes": 1099511627776,
-        "totalGbFormatted": "1024 GB NVMe M.2 SSD Array",
-        "freeBytes": 494780232499,
-        "freeGbFormatted": "460.8 GB Wolne",
-        "driveType": "NVMe M.2 SSD PCIe 4.0 High-Speed"
-      },
-      "gpu": {
-        "vendorAndModel": "NVIDIA GeForce RTX 4090 24GB GDDR6X (PCIe 4.0 x16)",
-        "deviceId": "PCI\\VEN_10DE&DEV_2684&SUBSYS_13971043",
-        "vramGb": 24
-      },
-      "os": {
-        "platform": "linux",
-        "distroOrBuild": "linux 4.19.0-gvisor (x64)",
-        "hostname": "localhost",
-        "ipAddress": "169.254.9.1"
-      },
-      "motherboard": {
-        "manufacturer": "Gigabyte Technology Co., Ltd.",
-        "model": "Z790 AORUS MASTER (REV 1.0)",
-        "uuid": "4C4C4554-0044-3010-8041-B2C04F315833",
-        "serialNumber": "SN-98214710294-Z790"
-      },
-      "bios": {
-        "vendor": "American Megatrends International, LLC.",
-        "version": "F19",
-        "releaseDate": "01/15/2026",
-        "boardModel": "Z790 AORUS MASTER",
-        "systemVendor": "Gigabyte Technology Co., Ltd.",
-        "modelSpecificBiosString": "F19-GIGABYTE-Z790"
-      },
-      "timestamp": "2026-08-06T18:45:02.213Z"
-    },
-    "sensors": {
-      "cpuTempC": 49,
-      "gpuTempC": 48,
-      "vrmTempC": 62,
-      "cpuFanRpm": 2077
-    },
-    "thermalSpikeDetected": false,
-    "spikeReason": "Normal Thermal State"
-  },
-  {
     "id": "snap_1786041916553_p5nf2",
     "timestamp": "2026-08-06T18:45:13.601Z",
     "specs": {
@@ -10048,5 +9914,139 @@
     },
     "thermalSpikeDetected": false,
     "spikeReason": "Normal Thermal State"
+  },
+  {
+    "id": "snap_1786263012325_5irs5",
+    "timestamp": "2026-08-09T08:10:08.520Z",
+    "specs": {
+      "formFactor": "DESKTOP",
+      "chassisTypeRaw": "3",
+      "chassisDescription": "Komputer Stacjonarny PC / ATX Tower",
+      "detectionMethod": "SYSFS_DMI",
+      "confidencePercent": 98,
+      "cpu": {
+        "model": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+        "cores": 24,
+        "threads": 24,
+        "clockSpeedGhz": "3.20 GHz (Turbo 5.80 GHz)",
+        "architecture": "x64"
+      },
+      "ram": {
+        "totalBytes": 17179869184,
+        "totalGbFormatted": "16 GB RAM DDR4/DDR5",
+        "freeBytes": 9448928051,
+        "freeGbFormatted": "8.8 GB Wolne",
+        "usedPercent": 45,
+        "memoryType": "DDR4 / DDR5 Dual-Channel"
+      },
+      "disk": {
+        "totalBytes": 1099511627776,
+        "totalGbFormatted": "1024 GB NVMe M.2 SSD Array",
+        "freeBytes": 494780232499,
+        "freeGbFormatted": "460.8 GB Wolne",
+        "driveType": "NVMe M.2 SSD PCIe 4.0 High-Speed"
+      },
+      "gpu": {
+        "vendorAndModel": "NVIDIA GeForce RTX 4090 24GB GDDR6X (PCIe 4.0 x16)",
+        "deviceId": "PCI\\VEN_10DE&DEV_2684&SUBSYS_13971043",
+        "vramGb": 24
+      },
+      "os": {
+        "platform": "linux",
+        "distroOrBuild": "linux 6.8.0-1052-azure (x64)",
+        "hostname": "codespaces-3bbd3b",
+        "ipAddress": "10.0.10.58"
+      },
+      "motherboard": {
+        "manufacturer": "Gigabyte Technology Co., Ltd.",
+        "model": "Z790 AORUS MASTER (REV 1.0)",
+        "uuid": "4C4C4554-0044-3010-8041-B2C04F315833",
+        "serialNumber": "SN-98214710294-Z790"
+      },
+      "bios": {
+        "vendor": "American Megatrends International, LLC.",
+        "version": "F19",
+        "releaseDate": "01/15/2026",
+        "boardModel": "Z790 AORUS MASTER",
+        "systemVendor": "Gigabyte Technology Co., Ltd.",
+        "modelSpecificBiosString": "F19-GIGABYTE-Z790"
+      },
+      "timestamp": "2026-08-09T08:10:11.303Z"
+    },
+    "sensors": {
+      "cpuTempC": 104,
+      "gpuTempC": 92,
+      "vrmTempC": 113,
+      "cpuFanRpm": 4944
+    },
+    "thermalSpikeDetected": true,
+    "spikeReason": "CPU Package Thermal Spike (104°C)"
+  },
+  {
+    "id": "snap_1786263026385_7ipwb",
+    "timestamp": "2026-08-09T08:10:22.601Z",
+    "specs": {
+      "formFactor": "DESKTOP",
+      "chassisTypeRaw": "3",
+      "chassisDescription": "Komputer Stacjonarny PC / ATX Tower",
+      "detectionMethod": "SYSFS_DMI",
+      "confidencePercent": 98,
+      "cpu": {
+        "model": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+        "cores": 24,
+        "threads": 24,
+        "clockSpeedGhz": "3.20 GHz (Turbo 5.80 GHz)",
+        "architecture": "x64"
+      },
+      "ram": {
+        "totalBytes": 17179869184,
+        "totalGbFormatted": "16 GB RAM DDR4/DDR5",
+        "freeBytes": 9448928051,
+        "freeGbFormatted": "8.8 GB Wolne",
+        "usedPercent": 45,
+        "memoryType": "DDR4 / DDR5 Dual-Channel"
+      },
+      "disk": {
+        "totalBytes": 1099511627776,
+        "totalGbFormatted": "1024 GB NVMe M.2 SSD Array",
+        "freeBytes": 494780232499,
+        "freeGbFormatted": "460.8 GB Wolne",
+        "driveType": "NVMe M.2 SSD PCIe 4.0 High-Speed"
+      },
+      "gpu": {
+        "vendorAndModel": "NVIDIA GeForce RTX 4090 24GB GDDR6X (PCIe 4.0 x16)",
+        "deviceId": "PCI\\VEN_10DE&DEV_2684&SUBSYS_13971043",
+        "vramGb": 24
+      },
+      "os": {
+        "platform": "linux",
+        "distroOrBuild": "linux 6.8.0-1052-azure (x64)",
+        "hostname": "codespaces-3bbd3b",
+        "ipAddress": "10.0.10.58"
+      },
+      "motherboard": {
+        "manufacturer": "Gigabyte Technology Co., Ltd.",
+        "model": "Z790 AORUS MASTER (REV 1.0)",
+        "uuid": "4C4C4554-0044-3010-8041-B2C04F315833",
+        "serialNumber": "SN-98214710294-Z790"
+      },
+      "bios": {
+        "vendor": "American Megatrends International, LLC.",
+        "version": "F19",
+        "releaseDate": "01/15/2026",
+        "boardModel": "Z790 AORUS MASTER",
+        "systemVendor": "Gigabyte Technology Co., Ltd.",
+        "modelSpecificBiosString": "F19-GIGABYTE-Z790"
+      },
+      "timestamp": "2026-08-09T08:10:26.307Z"
+    },
+    "sensors": {
+      "cpuTempC": 99,
+      "gpuTempC": 87,
+      "vrmTempC": 106,
+      "cpuFanRpm": 4729
+    },
+    "thermalSpikeDetected": true,
+    "spikeReason": "CPU Package Thermal Spike (99°C)"
   }
 ]

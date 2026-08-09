@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pobierz instalator Windows TermoFix</title>
+  <style>
+    body { background:#0b1120; color:#fff; font-family:Arial, sans-serif; margin:0; padding:40px; }
+    .card { max-width:720px; margin:auto; background:#111827; border:1px solid #334155; border-radius:18px; padding:28px; }
+    a.button { display:inline-flex; align-items:center; gap:10px; padding:14px 20px; margin:10px 0; border-radius:14px; text-decoration:none; color:#fff; font-weight:700; }
+    a.primary { background:#7c3aed; }
+    a.secondary { background:#0f766e; }
+    p, li { line-height:1.7; color:#cbd5e1; }
+    ul { padding-left:20px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>TermoFix Windows Installer</h1>
+    <p>Plik ZIP instalatora jest już gotowy i znajduje się w katalogu <code>public/TermoFix_Windows_Full_Installer_7-11.zip</code>.</p>
+    <a class="button primary" href="/api/download/windows-full-installer-zip">Pobierz gotowy ZIP instalatora Windows 7–11 x64</a>
+    <a class="button secondary" href="/api/download/windows-full-installer-zip">Pobierz ZIP przez endpoint</a>
+    <h2>Instrukcje</h2>
+    <ul>
+      <li>Uruchom serwer aplikacji: <code>npm run dev -- --host 0.0.0.0</code></li>
+      <li>Otwórz w przeglądarce: <code>http://localhost:3000/windows-installer-download.html</code></li>
+      <li>Kliknij przycisk, aby pobrać gotowy instalator Windows 7–11 x64.</li>
+    </ul>
+    <p>Jeśli używasz Codespaces lub innego portu, zamień <code>localhost:3000</code> na właściwy adres.</p>
+  </div>
+</body>
+</html>

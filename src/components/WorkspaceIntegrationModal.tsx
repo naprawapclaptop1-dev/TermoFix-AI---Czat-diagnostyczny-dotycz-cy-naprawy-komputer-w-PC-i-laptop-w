@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Plus,
   Send,
+  Upload,
   AlertTriangle,
   ExternalLink,
   ShieldAlert,
@@ -193,6 +194,50 @@ export const WorkspaceIntegrationModal: React.FC<WorkspaceIntegrationModalProps>
       }
     } catch (err: any) {
       setStatusMessage('Błąd wysyłania do Drive: ' + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Google Drive: Upload prepared Windows installer ZIP to Drive
+  const uploadInstallerZipToDrive = async () => {
+    const token = getAccessToken() || accessToken;
+    if (!token) {
+      setStatusMessage('Zaloguj się najpierw z Google.');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const zipResponse = await fetch('/download/TermoFix_Windows_Full_Installer_7-11.zip');
+      if (!zipResponse.ok) {
+        throw new Error('Nie można pobrać pliku ZIP z serwera.');
+      }
+      const zipBlob = await zipResponse.blob();
+      const metadata = {
+        name: `TermoFix_Windows_Full_Installer_7-11_${new Date().toISOString().slice(0, 10)}.zip`,
+        mimeType: 'application/zip'
+      };
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      form.append('file', zipBlob, metadata.name);
+
+      const driveRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: form
+      });
+
+      const driveData = await driveRes.json();
+      if (driveData.id) {
+        setStatusMessage(`Instalator ZIP przesłany do Google Drive! ID: ${driveData.id}`);
+        fetchDriveFiles();
+      } else {
+        throw new Error(driveData.error?.message || 'Błąd przesyłania do Drive.');
+      }
+    } catch (err: any) {
+      setStatusMessage('Błąd uploadu do Drive: ' + (err.message || 'Nieznany błąd'));
     } finally {
       setIsLoading(false);
     }
@@ -543,6 +588,14 @@ export const WorkspaceIntegrationModal: React.FC<WorkspaceIntegrationModalProps>
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Zapisz Dziennik w Drive</span>
+                  </button>
+                  <button
+                    onClick={uploadInstallerZipToDrive}
+                    disabled={!isAuthenticated || isLoading}
+                    className="flex items-center space-x-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs px-3 py-2 rounded-lg font-semibold transition disabled:opacity-50"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Wyślij instalator ZIP do Drive</span>
                   </button>
                 </div>
               </div>

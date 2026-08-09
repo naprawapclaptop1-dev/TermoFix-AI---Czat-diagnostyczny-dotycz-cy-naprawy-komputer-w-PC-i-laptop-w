@@ -804,6 +804,22 @@ export default function App() {
                 </a>
 
                 <a
+                  href="/api/download/windows-full-installer-zip"
+                  className="bg-violet-600 hover:bg-violet-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md border border-violet-400/30"
+                >
+                  <Download className="w-4 h-4" />
+                  Pobierz ZIP Instalatora Windows 7–11 x64
+                </a>
+
+                <a
+                  href="/api/download/windows-full-installer-zip"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md border border-emerald-400/30"
+                >
+                  <Download className="w-4 h-4" />
+                  Bezpośredni instalator Windows: POBIERZ TERAZ
+                </a>
+
+                <a
                   href="https://drive.google.com/drive/recent?hl=pl"
                   target="_blank"
                   rel="noreferrer"

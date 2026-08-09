@@ -1314,51 +1314,160 @@ app.get("/api/download-windows-installer", (req, res) => {
   const appUrl = `${protocol}://${host}`;
 
   const batchScript = `@echo off
-title TermoFix AI - Instalator i Naprawiacz Systemowy Windows
+title TermoFix Setup - Instalator TermoFix AI
 color 0B
-echo ===============================================================================
-echo   TERMOPC AI - ZAAAWANSOWANY INSTALATOR APLIKACJI I NAPRAWIACZ SYSTEMU
-echo ===============================================================================
+echo ===============================================================
+echo   TermoFix Setup - Instalator TermoFix AI
+echo ===============================================================
 echo.
-echo [1/4] Tworzenie katalogu roboczego w Program Files...
-mkdir "%ProgramFiles%\\TermoFixAI" 2>nul
+echo [1/4] Tworzenie katalogu instalacyjnego...
+set "INSTALL_DIR=%ProgramFiles%\\TermoFixAI"
+mkdir "%INSTALL_DIR%" 2>nul
 
-echo [2/4] Tworzenie skrótu na Pulpicie Windows...
-set "DESKTOP=%USERPROFILE%\\Desktop"
-set "LNK=%DESKTOP%\\TermoFix AI - Serwis Laptopów.url"
-echo [InternetShortcut] > "%LNK%"
-echo URL=${appUrl} >> "%LNK%"
-echo IconIndex=0 >> "%LNK%"
-echo IconFile=%SystemRoot%\\System32\\shell32.dll >> "%LNK%"
+echo [2/4] Tworzenie uruchamiacza TermoFix AI...
+set "LAUNCHER=%INSTALL_DIR%\\Start-TermoFixAI.bat"
+(
+  echo @echo off
+  echo title TermoFix AI Launcher
+  echo start "" "${appUrl}"
+) > "%LAUNCHER%"
 
-echo [3/4] Przygotowanie narzędzi naprawczych systemu (SFC, DISM, BCD)...
-set "REPAIR_BAT=%ProgramFiles%\\TermoFixAI\\repair_system.bat"
-echo @echo off > "%REPAIR_BAT%"
-echo title TermoFix System & Program Doctor >> "%REPAIR_BAT%"
-echo color 0C >> "%REPAIR_BAT%"
-echo echo [NAPRAWA SYSTEMU]: Skanowanie plików systemowych (SFC /scannow)... >> "%REPAIR_BAT%"
-echo sfc /scannow >> "%REPAIR_BAT%"
-echo echo [NAPRAWA OBRAZU]: DISM Restore Health... >> "%REPAIR_BAT%"
-echo dism /online /cleanup-image /restorehealth >> "%REPAIR_BAT%"
-echo echo [NAPRAWA ROZRUCHU]: Weryfikacja magazynu BCD... >> "%REPAIR_BAT%"
-echo bcdboot C:\\Windows /s S: /f UEFI >> "%REPAIR_BAT%"
-echo echo Naprawa zakończona pomyślnie! >> "%REPAIR_BAT%"
-echo pause >> "%REPAIR_BAT%"
+echo [3/4] Tworzenie skrótu w menu Start...
+set "START_MENU=%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\TermoFix AI"
+mkdir "%START_MENU%" 2>nul
+powershell -NoProfile -Command "$s=(New-Object -ComObject WScript.Shell).CreateShortcut('%START_MENU%\\TermoFix AI.lnk'); $s.TargetPath='%LAUNCHER%'; $s.WorkingDirectory='%INSTALL_DIR%'; $s.WindowStyle=1; $s.Save()"
 
-echo [4/4] Konfiguracja pomyślna! Skrót został dodany na Pulpit.
+echo [4/4] Tworzenie pliku odinstalowania...
+set "UNINSTALL=%INSTALL_DIR%\\Uninstall-TermoFixAI.bat"
+(
+  echo @echo off
+  echo title Odinstaluj TermoFix AI
+  echo echo Usuwanie TermoFix AI...
+  echo rmdir /s /q "%%INSTALL_DIR%%"
+  echo echo Usuwanie skrótu menu Start...
+  echo del "%%START_MENU%%\\TermoFix AI.lnk" 2>nul
+  echo echo Gotowe.
+  echo pause
+) > "%UNINSTALL%"
+
+echo Instalacja zakonczona!
 echo.
-echo Uruchamianie aplikacji TermoFix AI w dedykowanym oknie przeglądarki...
-start msedge --app="${appUrl}" 2>nul || start "${appUrl}"
+echo Skrót TermoFix AI został utworzony w menu Start.
+echo Aby uruchomić aplikację, kliknij skrót w menu Start lub uruchom:
+echo "%LAUNCHER%"
 echo.
-echo ===============================================================================
-echo Instalacja zakończona sukcesem. Możesz zamknąć to okno.
-echo ===============================================================================
+echo Jeżeli chcesz otworzyć aplikację teraz, uruchom skrót ręcznie.
 pause
 `;
 
-  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-  res.setHeader('Content-Disposition', 'attachment; filename="Instalator_TermoFix_AI_Windows.cmd"');
-  res.send(batchScript);
+  try {
+    const exeBuffer = compileBatToExe(batchScript, true);
+    res.setHeader('Content-Type', 'application/x-msdownload');
+    res.setHeader('Content-Disposition', 'attachment; filename="TermoFix_Setup.exe"');
+    res.send(exeBuffer);
+  } catch (err) {
+    console.error('Failed to compile TermoFix_Setup.exe:', err);
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="TermoFix_Setup.cmd"');
+    res.send(batchScript);
+  }
+});
+
+// Full Windows Installer ZIP (Windows 7/8/10/11)
+app.get("/api/download/windows-full-installer-zip", async (req, res) => {
+  try {
+    const protocol = ((req.headers['x-forwarded-proto'] as string) || req.protocol || 'http').split(',')[0].trim() || 'http';
+    const host = req.headers['host'] || 'localhost:3000';
+    const appUrl = `${protocol}://${host}`;
+
+    const zip = new JSZip();
+    const installerFolder = zip.folder('TermoFix_Windows_Full_Installer');
+
+    const fullInstallerCmd = `@echo off
+:: ===============================================================
+:: TermoFix AI - Pełny Instalator Windows 7/8/10/11 64-bit
+:: ===============================================================
+if "%PROCESSOR_ARCHITECTURE%"=="x86" (
+  if defined PROCESSOR_ARCHITEW6432 (
+    "%SystemRoot%\\SysNative%\\cmd.exe" /c "%~f0" %*
+    exit /b
+  )
+)
+
+title TermoFix AI - Pełny Instalator Windows 7/8/10/11 64-bit
+color 0A
+cls
+echo ===============================================================
+echo   TermoFix AI - Pełny Instalator Windows 7/8/10/11 64-bit
+echo ===============================================================
+echo.
+echo Tworzenie skrótu na Pulpicie Windows...
+set "DESKTOP=%USERPROFILE%\\Desktop"
+set "SHORTCUT=%DESKTOP%\\TermoFix AI - Serwis Windows.url"
+echo [InternetShortcut] > "%SHORTCUT%"
+echo URL=${appUrl} >> "%SHORTCUT%"
+echo IconIndex=0 >> "%SHORTCUT%"
+echo IconFile=%SystemRoot%\\System32\\shell32.dll >> "%SHORTCUT%"
+echo.
+echo [SUKCES] Utworzono skrót "TermoFix AI - Serwis Windows" na Twoim Pulpicie!
+echo.
+echo Instalacja zakończona. Aby uruchomić TermoFix AI, kliknij nowy skrót na pulpicie.
+echo.
+echo Jeżeli chcesz, możesz ręcznie otworzyć przeglądarkę i przejść do:
+echo ${appUrl}
+echo.
+echo Gotowe! Mozesz zamknac to okno.
+pause
+`;
+
+    const psInstaller = `# TermoFix AI Windows Desktop Installer (PowerShell)
+$DesktopPath = [Environment]::GetFolderPath("Desktop")
+$ShortcutPath = Join-Path -Path $DesktopPath -ChildPath "TermoFix AI Serwis.lnk"
+
+$WshShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut($ShortcutPath)
+$Shortcut.TargetPath = "powershell.exe"
+$Shortcut.Arguments = "-NoProfile -WindowStyle Hidden -Command \"Start-Process '${appUrl}'\""
+$Shortcut.Description = "TermoFix AI - Serwis PC & Diagnostyka"
+$Shortcut.IconLocation = "%SystemRoot%\\System32\\shell32.dll, 14"
+$Shortcut.Save()
+
+Write-Host "[OK] Skrót 'TermoFix AI Serwis' został dodany na Pulpit Windows!" -ForegroundColor Green
+Write-Host "Aby uruchomić aplikację, kliknij skrót na pulpicie lub otwórz adres: ${appUrl}" -ForegroundColor Green
+`;
+
+    installerFolder?.file('Instalator_TermoFix_AI_Windows_7-11_x64.cmd', fullInstallerCmd);
+    installerFolder?.file('Instalator_PowerShell_TermoFix_AI_Windows.ps1', psInstaller);
+    installerFolder?.file('README.txt', `TermoFix AI - Pełny instalator Windows 7/8/10/11 64-bit
+
+Zawartość archiwum:
+- Instalator_TermoFix_AI_Windows_7-11_x64.cmd
+- Instalator_PowerShell_TermoFix_AI_Windows.ps1
+
+Instrukcje:
+1. Rozpakuj archiwum na dowolny komputer z systemem Windows 7, 8, 10 lub 11.
+2. Uruchom plik Instalator_TermoFix_AI_Windows_7-11_x64.cmd jako Administrator.
+3. Jeżeli PowerShell jest dostępny, możesz również użyć pliku Instalator_PowerShell_TermoFix_AI_Windows.ps1.
+4. Po utworzeniu skrótu kliknij go, aby otworzyć TermoFix AI w przeglądarce.
+
+Uwaga:
+- Windows 7 może wymagać ręcznej aktualizacji PowerShell i włączenia skryptów.
+- Jeśli domyślna przeglądarka nie otworzy aplikacji, spróbuj ręcznie uruchomić skrót.
+`);
+
+    const content = await zip.generateAsync({ type: 'nodebuffer' });
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename="TermoFix_Windows_Full_Installer_7-11.zip"');
+    res.send(content);
+  } catch (err) {
+    console.error('ZIP generation failed:', err);
+    res.status(500).json({ error: 'Failed to generate full Windows installer ZIP' });
+  }
+});
+
+// Redirect the old installer download path to the public ZIP file for legacy compatibility.
+app.get('/api/download/windows-installer-zip', (req, res) => {
+  res.redirect('/download/TermoFix_Windows_Full_Installer_7-11.zip');
 });
 
 // Windows .EXE Workstation Installer Package Endpoint
@@ -2003,6 +2112,31 @@ app.get("/api/download/iso/:isoId", async (req, res) => {
 
 // Vite Integration for Dev vs Production
 async function startServer() {
+  const publicPath = path.join(process.cwd(), "public");
+
+  app.all("/download/TermoFix_Windows_Full_Installer_7-11.zip", (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(204);
+    }
+
+    return res.redirect('/api/download/windows-full-installer-zip');
+  });
+
+  app.get("/windows-installer-download.html", (req, res) => {
+    return res.sendFile(path.join(publicPath, "windows-installer-download.html"));
+  });
+
+  app.get("/", (req, res) => {
+    return res.sendFile(path.join(publicPath, "windows-installer-download.html"));
+  });
+
+  app.use(express.static(publicPath));
+
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
