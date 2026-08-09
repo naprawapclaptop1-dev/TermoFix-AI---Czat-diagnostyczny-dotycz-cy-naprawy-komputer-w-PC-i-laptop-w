@@ -15,6 +15,7 @@ import {
   Volume2,
   VolumeX
 } from 'lucide-react';
+import { LiveTelemetryCharts } from './LiveTelemetryCharts';
 
 export interface VoltageRailInfo {
   current: number;
@@ -554,6 +555,11 @@ Podaj rekomendacje dotyczące stabilności zasilacza ATX, throttlingu termiczneg
             </div>
           </div>
         )}
+
+        {/* Real-time Recharts Telemetry Section */}
+        <div className="pt-2">
+          <LiveTelemetryCharts />
+        </div>
         </div>
       ) : (
         <div className="p-8 text-center text-slate-400 text-xs">

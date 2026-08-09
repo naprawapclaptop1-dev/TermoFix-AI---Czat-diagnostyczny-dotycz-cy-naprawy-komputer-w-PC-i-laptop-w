@@ -87,6 +87,10 @@ import { RealtimeThermalAlertSystem } from './components/RealtimeThermalAlertSys
 import { MyPcLiveTelemetryBanner } from './components/MyPcLiveTelemetryBanner';
 import { SensorsDashboard } from './components/SensorsDashboard';
 import { SystemConfigSummary } from './components/SystemConfigSummary';
+import { ThermalHeatmapVisualizer } from './components/ThermalHeatmapVisualizer';
+import { StressTestScheduler } from './components/StressTestScheduler';
+import { LiveTelemetryCharts } from './components/LiveTelemetryCharts';
+import { SpringModalWrapper } from './components/SpringModalWrapper';
 import { PRESET_CASES } from './data/presets';
 import { ChatMessage, ThermalData, PresetCase, JournalEntry, DiagnosticCardData, LiveSessionBackupData } from './types';
 
@@ -205,6 +209,9 @@ export default function App() {
   const [isFurMarkOpen, setIsFurMarkOpen] = useState(false);
   const [isRemoteDesktopOpen, setIsRemoteDesktopOpen] = useState(false);
   const [isRodoOpen, setIsRodoOpen] = useState(false);
+  const [isThermalHeatmapOpen, setIsThermalHeatmapOpen] = useState(false);
+  const [isStressTestSchedulerOpen, setIsStressTestSchedulerOpen] = useState(false);
+  const [isLiveTelemetryOpen, setIsLiveTelemetryOpen] = useState(false);
   const [isHighContrast, setIsHighContrast] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -600,6 +607,9 @@ export default function App() {
     { id: 'av-simulator', name: 'Symulator Antywirusa', icon: <ShieldCheck className="w-8 h-8 text-white" />, color: 'from-emerald-600 to-green-700', onClick: () => setIsAntivirusSimulatorOpen(true) },
     { id: 'split-screen', name: 'Microscope & Chat (Split)', icon: <Tv className="w-8 h-8 text-white" />, color: 'from-fuchsia-600 to-pink-700', onClick: () => setIsSplitScreen(true) },
     { id: 'multimeter', name: 'Multimetr & Oscyloskop', icon: <Gauge className="w-8 h-8 text-white" />, color: 'from-blue-500 to-cyan-600', onClick: () => setIsMultimeterOpen(true) },
+    { id: 'thermal-heatmap', name: 'Heatmapa D3', icon: <Flame className="w-8 h-8 text-white" />, color: 'from-amber-500 to-rose-600', onClick: () => setIsThermalHeatmapOpen(true) },
+    { id: 'stress-scheduler', name: 'Stress Scheduler', icon: <Activity className="w-8 h-8 text-white" />, color: 'from-rose-600 to-red-700', onClick: () => setIsStressTestSchedulerOpen(true) },
+    { id: 'live-telemetry', name: 'Telemetry Charts', icon: <Gauge className="w-8 h-8 text-white" />, color: 'from-cyan-500 to-blue-600', onClick: () => setIsLiveTelemetryOpen(true) },
     { id: 'presets', name: 'Baza Usterek', icon: <Archive className="w-8 h-8 text-white" />, color: 'from-indigo-500 to-purple-600', onClick: () => setIsPresetsOpen(true) },
     { id: 'windows-repair', name: 'Windows Repair', icon: <Terminal className="w-8 h-8 text-white" />, color: 'from-sky-500 to-blue-600', onClick: () => setIsWindowsRepairOpen(true) },
     { id: 'disk-diag', name: 'Diagnostyka Dysków', icon: <HardDrive className="w-8 h-8 text-white" />, color: 'from-slate-500 to-slate-700', onClick: () => setIsDiskDiagnosticsOpen(true) },
@@ -1306,6 +1316,54 @@ Co sugerujesz jako kolejny krok w procesie diagnostycznym?`);
         onClose={() => setIsRodoOpen(false)}
         onSendToChat={(prompt) => handleSendMessage(prompt)}
       />
+
+      {/* Spring Animated Modals: Thermal Heatmap D3 Visualizer */}
+      <SpringModalWrapper
+        isOpen={isThermalHeatmapOpen}
+        onClose={() => setIsThermalHeatmapOpen(false)}
+        maxWidth="max-w-6xl"
+      >
+        <ThermalHeatmapVisualizer
+          onClose={() => setIsThermalHeatmapOpen(false)}
+          onSaveToJournal={(spots) => {
+            const spotsSummary = spots.map(s => `${s.label}: ${s.tempC}°C (X:${s.x}%, Y:${s.y}%)`).join(', ');
+            handleSaveToJournal(`[ANALIZA HEATMAPA D3 TERMOWIZJA] Wykryte gorące punkty (hotspoty): ${spotsSummary}`);
+            setToastMessage('✅ Zapisano punkty termiczne do Dziennika Napraw');
+            setTimeout(() => setToastMessage(null), 3000);
+          }}
+        />
+      </SpringModalWrapper>
+
+      {/* Spring Animated Modals: Stress Test Scheduler */}
+      <SpringModalWrapper
+        isOpen={isStressTestSchedulerOpen}
+        onClose={() => setIsStressTestSchedulerOpen(false)}
+        maxWidth="max-w-5xl"
+      >
+        <StressTestScheduler
+          onClose={() => setIsStressTestSchedulerOpen(false)}
+          onFinishSequence={(queue) => {
+            const summary = queue.map(q => `${q.name}: Max ${q.maxTempC || '?'}°C (${q.status.toUpperCase()})`).join('; ');
+            handleSaveToJournal(`[STRESS-TEST SCHEDULER BANCHMARK] Wyniki sekwencji: ${summary}`);
+            setToastMessage('🔥 Zapisano wyniki sekwencji stress-testów w Dzienniku Napraw');
+            setTimeout(() => setToastMessage(null), 3500);
+          }}
+        />
+      </SpringModalWrapper>
+
+      {/* Spring Animated Modals: Live Telemetry Charts */}
+      <SpringModalWrapper
+        isOpen={isLiveTelemetryOpen}
+        onClose={() => setIsLiveTelemetryOpen(false)}
+        maxWidth="max-w-5xl"
+        title="Wykresy Telemetrii Czasu Rzeczywistego (Recharts)"
+        subtitle="Analiza użycia CPU/GPU, napięć linii VCORE/+12V/+5V/+3.3V oraz pętli temperatur"
+        icon={<Gauge className="w-5 h-5" />}
+      >
+        <div className="p-6">
+          <LiveTelemetryCharts />
+        </div>
+      </SpringModalWrapper>
 
       {/* Bottom-Right Toast Notification System */}
       {toastMessage && (
