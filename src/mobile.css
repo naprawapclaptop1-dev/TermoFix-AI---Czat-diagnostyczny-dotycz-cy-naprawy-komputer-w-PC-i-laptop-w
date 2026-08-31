@@ -1,0 +1,28 @@
+/* BoardView PRO AI 2026 - Android touch/mobile layer */
+:root { --bv-safe-top: env(safe-area-inset-top, 0px); --bv-safe-bottom: env(safe-area-inset-bottom, 0px); }
+html, body, #root { width:100%; min-width:0; min-height:100%; margin:0; }
+body { overflow-x:hidden; -webkit-text-size-adjust:100%; touch-action:manipulation; }
+button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+button, [role="button"] { min-height:44px; }
+input, textarea, select { font-size:16px !important; }
+img, video, canvas { max-width:100%; }
+@media (max-width: 900px) {
+  body { padding-top:var(--bv-safe-top); padding-bottom:var(--bv-safe-bottom); }
+  #root { overflow-x:hidden; }
+  /* Keep every existing desktop module usable by touch instead of hiding it. */
+  [class*="grid"] { max-width:100%; }
+  [class*="overflow-x-auto"] { -webkit-overflow-scrolling:touch; }
+  textarea { min-height:44px; }
+}
+@media (max-width: 600px) {
+  body { font-size:15px; }
+  button, [role="button"] { min-height:46px; }
+  /* Make two-column knowledge/viewer layouts stack naturally on phones. */
+  .bv-mobile-stack { display:flex !important; flex-direction:column !important; width:100% !important; }
+  .bv-mobile-full { width:100% !important; max-width:100% !important; }
+  .bv-mobile-scroll { overflow:auto !important; -webkit-overflow-scrolling:touch; }
+  .bv-mobile-chat-input { position:sticky; bottom:0; padding-bottom:calc(8px + var(--bv-safe-bottom)); background:inherit; }
+}
+@media (orientation: landscape) and (max-height: 600px) {
+  body { font-size:14px; }
+}
