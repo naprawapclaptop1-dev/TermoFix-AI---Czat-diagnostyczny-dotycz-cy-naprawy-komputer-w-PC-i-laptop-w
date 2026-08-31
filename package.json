@@ -1,17 +1,22 @@
 {
-  "name": "react-example",
+  "name": "boardview-pro-ai-2026",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
     "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build:web": "vite build",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
-    "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "clean": "rm -rf dist server.js android",
+    "lint": "tsc --noEmit",
+    "android:sync": "npm run build:web && npx cap sync android",
+    "android:open": "npx cap open android"
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/core": "^7.4.4",
     "@google/genai": "^2.4.0",
     "@tailwindcss/vite": "^4.1.14",
     "@types/d3": "^7.4.3",
@@ -29,6 +34,7 @@
     "express": "^4.21.2",
     "firebase": "^12.17.0",
     "firebase-admin": "^14.2.0",
+    "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
     "lucide-react": "^0.546.0",
@@ -43,5 +49,7 @@
     "vite": "^6.2.3",
     "vite-plugin-pwa": "^1.3.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.4"
+  }
 }
