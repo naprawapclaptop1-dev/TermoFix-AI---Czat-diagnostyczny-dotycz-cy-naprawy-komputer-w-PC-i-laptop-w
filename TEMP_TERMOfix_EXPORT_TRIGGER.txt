@@ -1,1 +1,1 @@
-Temporary trigger commit for TermoFix AI source export workflow. This file will be removed when export is finished.
+Temporary workflow trigger for TermoFix AI source/web export; excluded from final package.
