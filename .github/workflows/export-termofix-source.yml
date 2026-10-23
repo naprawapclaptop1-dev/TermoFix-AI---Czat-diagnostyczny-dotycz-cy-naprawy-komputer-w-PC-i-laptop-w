@@ -1,0 +1,38 @@
+name: Export TermoFix AI source bundle
+
+on:
+  push:
+    branches:
+      - temp/termofix-source-export-20261023
+
+permissions:
+  contents: read
+
+jobs:
+  export-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout TermoFix AI source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Package actual repository source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p package/TermoFix_AI
+          git archive HEAD | tar -x -C package/TermoFix_AI
+          test -f package/TermoFix_AI/src/App.tsx
+          test -f package/TermoFix_AI/package.json
+          (cd package && zip -qr ../TermoFix_AI_full_source.zip TermoFix_AI)
+          sha256sum TermoFix_AI_full_source.zip > TermoFix_AI_full_source.sha256
+      - name: Upload TermoFix AI source package
+        uses: actions/upload-artifact@v4
+        with:
+          name: termofix-ai-full-source
+          path: |
+            TermoFix_AI_full_source.zip
+            TermoFix_AI_full_source.sha256
+          if-no-files-found: error
+          retention-days: 1
