@@ -11,27 +11,27 @@ permissions:
 jobs:
   package:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout actual TermoFix AI source
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Setup Node.js
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
-      - name: Install TermoFix dependencies
-        run: npm ci --no-audit --no-fund
+      - name: Synchronize dependencies and lockfile
+        run: npm install --no-audit --no-fund
       - name: Build TermoFix web interface for local WebView
         run: npm run build:web
-      - name: Package sources and built web interface
+      - name: Package synchronized source and embeddable web interface
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p package/TermoFix_AI
-          git archive HEAD | tar -x -C package/TermoFix_AI
+          rsync -a --exclude='.git' --exclude='node_modules' --exclude='dist' --exclude='package' --exclude='TermoFix_AI_full_source.zip' --exclude='TermoFix_AI_web_dist.zip' --exclude='TermoFix_AI_build_sha256.txt' ./ package/TermoFix_AI/
           rm -f package/TermoFix_AI/TEMP_TERMOfix_EXPORT_TRIGGER.txt
           rm -f package/TermoFix_AI/.github/workflows/export-termofix-source.yml
           (cd package && zip -qr ../TermoFix_AI_full_source.zip TermoFix_AI)
