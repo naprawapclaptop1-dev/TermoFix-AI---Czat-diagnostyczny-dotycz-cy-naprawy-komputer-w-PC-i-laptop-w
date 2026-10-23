@@ -1,1 +1,1 @@
-Trigger TermoFix AI web re-build after local diagnostic fallback. Excluded from final source package.
+Rebuild TermoFix AI bundle after application branding cleanup; exclude from final ZIP.
