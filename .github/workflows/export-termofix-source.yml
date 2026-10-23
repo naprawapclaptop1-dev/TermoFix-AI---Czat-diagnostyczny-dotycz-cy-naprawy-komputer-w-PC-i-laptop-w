@@ -1,4 +1,4 @@
-name: Export TermoFix AI source bundle
+name: Export and build TermoFix AI for NAPRAWA PC
 
 on:
   push:
@@ -9,30 +9,44 @@ permissions:
   contents: read
 
 jobs:
-  export-source:
+  package:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
-      - name: Checkout TermoFix AI source
+      - name: Checkout actual TermoFix AI source
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Package actual repository source
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install TermoFix dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Build TermoFix web interface for local WebView
+        run: npm run build:web
+      - name: Package sources and built web interface
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p package/TermoFix_AI
           git archive HEAD | tar -x -C package/TermoFix_AI
-          test -f package/TermoFix_AI/src/App.tsx
-          test -f package/TermoFix_AI/package.json
+          rm -f package/TermoFix_AI/TEMP_TERMOfix_EXPORT_TRIGGER.txt
+          rm -f package/TermoFix_AI/.github/workflows/export-termofix-source.yml
           (cd package && zip -qr ../TermoFix_AI_full_source.zip TermoFix_AI)
-          sha256sum TermoFix_AI_full_source.zip > TermoFix_AI_full_source.sha256
-      - name: Upload TermoFix AI source package
+          zip -qr TermoFix_AI_web_dist.zip dist
+          sha256sum TermoFix_AI_full_source.zip TermoFix_AI_web_dist.zip > TermoFix_AI_build_sha256.txt
+          test -f dist/index.html
+          test -s TermoFix_AI_full_source.zip
+          test -s TermoFix_AI_web_dist.zip
+      - name: Upload source and embeddable web build
         uses: actions/upload-artifact@v4
         with:
-          name: termofix-ai-full-source
+          name: termofix-ai-source-and-web
           path: |
             TermoFix_AI_full_source.zip
-            TermoFix_AI_full_source.sha256
+            TermoFix_AI_web_dist.zip
+            TermoFix_AI_build_sha256.txt
           if-no-files-found: error
           retention-days: 1
