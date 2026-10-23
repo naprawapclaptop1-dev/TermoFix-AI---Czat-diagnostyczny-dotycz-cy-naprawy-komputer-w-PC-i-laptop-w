@@ -1,1 +1,1 @@
-Temporary workflow trigger for TermoFix AI source/web export; excluded from final package.
+Trigger TermoFix AI web re-build after local diagnostic fallback. Excluded from final source package.
