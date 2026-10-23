@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'pl.naprawapclaptop.boardviewproai2026',
-  appName: 'BoardView PRO AI 2026',
+  appId: 'pl.naprawapc.termofixai',
+  appName: 'TermoFix AI',
   webDir: 'dist',
   bundledWebRuntime: false,
   server: {
