@@ -1,4 +1,4 @@
-/* BoardView PRO AI 2026 - Android touch/mobile layer */
+/* TermoFix AI - Android touch/mobile layer */
 :root { --bv-safe-top: env(safe-area-inset-top, 0px); --bv-safe-bottom: env(safe-area-inset-bottom, 0px); }
 html, body, #root { width:100%; min-width:0; min-height:100%; margin:0; }
 body { overflow-x:hidden; -webkit-text-size-adjust:100%; touch-action:manipulation; }
