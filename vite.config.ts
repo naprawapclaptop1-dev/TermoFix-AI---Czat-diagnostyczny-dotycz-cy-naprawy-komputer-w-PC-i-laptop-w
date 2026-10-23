@@ -17,8 +17,8 @@ export default defineConfig(() => {
           maximumFileSizeToCacheInBytes: 5242880, // 5MB
         },
         manifest: {
-          name: 'TermoFix AI Workstation',
-          short_name: 'TermoFix',
+          name: 'TermoFix AI',
+          short_name: 'TermoFix AI',
           description: 'Profesjonalna stacja robocza TermoFix',
           theme_color: '#020617',
           background_color: '#020617',
