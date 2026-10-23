@@ -94,6 +94,79 @@ import { SpringModalWrapper } from './components/SpringModalWrapper';
 import { PRESET_CASES } from './data/presets';
 import { ChatMessage, ThermalData, PresetCase, JournalEntry, DiagnosticCardData, LiveSessionBackupData } from './types';
 
+function termofixServerConfigured(): boolean {
+  if (typeof window === 'undefined') return false;
+  const host = window as Window & { __TERMOFIX_API_BASE?: string; __TERMOFIX_USE_API__?: boolean };
+  if (host.__TERMOFIX_USE_API__ === false) return false;
+  if (typeof host.__TERMOFIX_API_BASE === 'string' && host.__TERMOFIX_API_BASE.trim()) return true;
+  // Embedded build lives under /termofix/ on the NAPRAWA PC site. Without a
+  // separately configured TermoFix API, it uses the bundled local diagnostic fallback.
+  return !window.location.pathname.replace(/\/+$/, '').endsWith('/termofix')
+    && !window.location.pathname.includes('/termofix/');
+}
+
+function termofixApiUrl(path: string): string {
+  const host = window as Window & { __TERMOFIX_API_BASE?: string };
+  const base = (host.__TERMOFIX_API_BASE || '').trim().replace(/\/+$/, '');
+  return base ? base + path : path;
+}
+
+function offlineTermoFixAdvice(query: string, thermal?: ThermalData, hasImage = false): string {
+  const q = query.toLocaleLowerCase('pl');
+  const lines: string[] = [];
+  let title = 'Wstępna diagnostyka PC/laptopa';
+  if (/zalani|woda|ciecz|kawa|herbat|mok|wilgo/.test(q)) {
+    title = 'Podejrzenie zalania — najpierw bezpieczeństwo';
+    lines.push('Wyłącz urządzenie i odłącz zasilacz. Nie próbuj go ponownie uruchamiać ani ładować.');
+    lines.push('Nie susz gorącym powietrzem i nie wkładaj urządzenia do ryżu. Jeśli bateria jest wbudowana, nie wyrywaj jej samodzielnie.');
+    lines.push('Zabezpiecz dane i zleć rozebranie, odłączenie akumulatora oraz czyszczenie płyty serwisowi.');
+  } else if (/grzej|gorąc|przegrzew|temperatur|wentylator|chłod|thermal|hotspot|głośn/.test(q)) {
+    title = 'Diagnostyka temperatur i chłodzenia';
+    lines.push('Zapisz temperatury spoczynkowe i pod obciążeniem z tego samego narzędzia; nie traktuj samych szacunków jako pomiaru.');
+    lines.push('Sprawdź drożność wlotów/wylotów, pracę wentylatorów, docisk radiatora i stan pasty/termopadów zgodnie ze specyfikacją modelu.');
+    lines.push('Jeśli komputer wyłącza się termicznie, pojawia się zapach spalenizny albo wentylator stoi — przerwij testy obciążeniowe.');
+    if (thermal && Number.isFinite(thermal.maxTemp) && Number.isFinite(thermal.minTemp)) {
+      lines.push('Dane wprowadzone do widoku TermoFix: zakres ' + thermal.minTemp + '–' + thermal.maxTemp + '°C. To wartości wejściowe, nie niezależny odczyt czujnika.');
+    }
+  } else if (/nie włącz|nie uruch|brak zasil|martw|power|ładowark|zasilacz/.test(q)) {
+    title = 'Diagnostyka braku zasilania';
+    lines.push('Sprawdź gniazdko, przewód i zgodny z modelem zasilacz; obejrzyj port ładowania oraz diody sygnalizacyjne.');
+    lines.push('Odłącz peryferia i wykonaj wyłącznie procedurę resetu zasilania opisaną dla danego modelu.');
+    lines.push('Nie otwieraj zasilacza ATX i nie mierz napięć na podłączonej płycie bez odpowiednich umiejętności oraz zabezpieczeń.');
+  } else if (/blue screen|bsod|bluescreen|niebieski ekran|stop code|kod zatrzymania/.test(q)) {
+    title = 'Diagnostyka BSOD';
+    lines.push('Zapisz dokładny kod STOP i moment wystąpienia błędu. Nie instaluj wielu „naprawiaczy” naraz.');
+    lines.push('Jeśli system się uruchamia, zabezpiecz ważne dane, sprawdź dziennik niezawodności i ostatnio zmienione sterowniki/urządzenia.');
+    lines.push('Przy powtarzających się błędach sprawdź RAM i stan SMART dysku; testy zapisujące wykonuj dopiero po kopii danych.');
+  } else if (/dysk|ssd|nvme|hdd|plik|dane|odzysk|klik/.test(q)) {
+    title = 'Diagnostyka dysku i danych';
+    lines.push('Jeśli dysk klika, znika lub zgłasza błędy odczytu, ogranicz jego używanie. Nie uruchamiaj wielokrotnie testów naprawczych.');
+    lines.push('Najpierw wykonaj kopię/obraz sektorowy na inny nośnik; odzyskane pliki zapisuj na innym dysku niż źródłowy.');
+    lines.push('Nie uruchamiaj CHKDSK na nośniku z objawami awarii fizycznej przed zabezpieczeniem danych.');
+  } else if (/obraz|ekran|matryc|czarny ekran|nie wyświetla|gpu|grafik/.test(q)) {
+    title = 'Diagnostyka obrazu';
+    lines.push('Sprawdź jasność, zasilanie monitora i inny przewód/wejście; porównaj obraz na zewnętrznym ekranie, jeśli to możliwe.');
+    lines.push('Ustal, czy komputer wykonuje POST (diody, sygnały, aktywność dysku), i zapisz kody migania/beep.');
+    lines.push('Przed kontrolą RAM/GPU wyłącz komputer, odłącz zasilanie i stosuj ochronę ESD.');
+  } else if (/bateri|akumulator|spuch/.test(q)) {
+    title = 'Diagnostyka baterii';
+    lines.push('Jeśli bateria jest spuchnięta, gorąca lub uszkodzona, wyłącz urządzenie i nie ładuj go.');
+    lines.push('Porównaj raport kondycji baterii z objawami; sam procent zużycia nie rozstrzyga o przyczynie wyłączania.');
+    lines.push('Wymianę dobierz według dokładnego modelu i numeru części.');
+  } else if (/woln|zacina|zawiesza|powol|lag/.test(q)) {
+    title = 'Diagnostyka spowolnienia';
+    lines.push('Sprawdź w Menedżerze zadań obciążenie CPU/RAM/dysku i programy startowe, a także wolne miejsce na partycji systemowej.');
+    lines.push('Sprawdź SMART i kopię danych, zanim uruchomisz testy dysku. Zapisz procesy o najwyższym użyciu zasobów.');
+    lines.push('Unikaj automatycznych „czyścicieli rejestru” i przypadkowych sterowników z nieznanych źródeł.');
+  } else {
+    lines.push('Podaj dokładny model komputera/płyty, objaw, moment wystąpienia i pełny komunikat błędu.');
+    lines.push('Zacznij od kontroli nieinwazyjnych i kopii ważnych danych; zmiany BIOS, firmware i partycji wykonuj dopiero po weryfikacji modelu.');
+    lines.push('Jeżeli pojawia się dym, zapach spalenizny, zalanie lub spuchnięta bateria — przerwij pracę i odłącz zasilanie.');
+  }
+  if (hasImage) lines.push('Załączony obraz zachowano w rozmowie, ale w trybie lokalnym nie został automatycznie przeanalizowany przez model wizyjny.');
+  return 'TERMOFIX AI • ' + title + ' • TRYB LOKALNY\n\n' + lines.map((line, index) => (index + 1) + '. ' + line).join('\n') + '\n\nUwaga: to regułowa pomoc offline, a nie wynik zdalnego skanowania ani odpowiedź modelu AI. Po skonfigurowaniu serwera TermoFix można włączyć odpowiedzi serwerowe.';
+}
+
 export default function App() {
   // Global download interceptor to ensure reliable blob downloads in preview iframe
   useEffect(() => {
@@ -503,8 +576,9 @@ export default function App() {
     setIsAnalyzing(true);
 
     try {
-      // Call /api/analyze-thermal
-      const response = await fetch('/api/analyze-thermal', {
+      if (!termofixServerConfigured()) throw new Error('TermoFix backend is not configured for embedded offline mode');
+      // Call the configured TermoFix API (standalone by default; override via window.__TERMOFIX_API_BASE).
+      const response = await fetch(termofixApiUrl('/api/analyze-thermal'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -513,8 +587,10 @@ export default function App() {
         }),
       });
 
+      if (!response.ok) throw new Error('TermoFix API returned HTTP ' + response.status);
       const resData = await response.json();
       const diagnosticResult: DiagnosticCardData = resData.data || {};
+      if (!diagnosticResult.diagnosisSummary) throw new Error('Empty thermal analysis response');
 
       // Append assistant message with structured diagnostic card
       const newAssistantMsg: ChatMessage = {
@@ -529,12 +605,22 @@ export default function App() {
       setMessages((prev) => [...prev, newAssistantMsg]);
     } catch (err) {
       console.error('Error running thermal AI analysis:', err);
-      // Fallback message
+      // Honest offline fallback: never invent hotspot temperatures or claim that the image was analyzed.
+      const diagnosticResult: DiagnosticCardData = {
+        diagnosisSummary: offlineTermoFixAdvice('temperatura przegrzewanie hotspot chłodzenie', currentThermalData, Boolean(currentImage)),
+        repairSteps: [
+          'Zweryfikuj warunki pomiaru, skalę i emisyjność materiału.',
+          'Porównaj obszary płyty przy takim samym obciążeniu i czasie od uruchomienia.',
+          'Sprawdź chłodzenie i zasilanie dopiero po zabezpieczeniu danych i wyłączeniu urządzenia.',
+        ],
+      };
       const errorMsg: ChatMessage = {
         id: `msg-err-${Date.now()}`,
         role: 'assistant',
-        text: 'Wystąpił błąd podczas automatycznej analizy termowizyjnej. Spróbuj zadać pytanie na czacie.',
+        text: diagnosticResult.diagnosisSummary,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        imageUrl: currentImage,
+        structuredDiagnosis: diagnosticResult,
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
@@ -560,7 +646,8 @@ export default function App() {
     setIsAnalyzing(true);
 
     try {
-      const response = await fetch('/api/chat', {
+      if (!termofixServerConfigured()) throw new Error('TermoFix backend is not configured for embedded offline mode');
+      const response = await fetch(termofixApiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -571,7 +658,9 @@ export default function App() {
         }),
       });
 
+      if (!response.ok) throw new Error('TermoFix API returned HTTP ' + response.status);
       const data = await response.json();
+      if (typeof data.reply !== 'string' || !data.reply.trim()) throw new Error('Empty TermoFix reply');
 
       const assistantMsg: ChatMessage = {
         id: `asst-${Date.now()}`,
@@ -582,11 +671,11 @@ export default function App() {
 
       setMessages((prev) => [...prev, assistantMsg]);
     } catch (err) {
-      console.error('Chat error:', err);
+      console.info('TermoFix server API unavailable; using local diagnostic rules:', err);
       const errorMsg: ChatMessage = {
-        id: `err-${Date.now()}`,
+        id: `offline-${Date.now()}`,
         role: 'assistant',
-        text: 'Błąd połączenia z serwerem diagnostycznym AI.',
+        text: offlineTermoFixAdvice(text, currentThermalData, Boolean(userMsgImage)),
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, errorMsg]);
